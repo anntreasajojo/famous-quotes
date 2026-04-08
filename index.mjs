@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import express from 'express';
 import mysql from 'mysql2/promise';
 const app = express();
@@ -8,8 +10,8 @@ app.use(express.urlencoded({extended:true}));
 //setting up database connection pool, replace values in red
 const pool = mysql.createPool({
     host: "sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-    user: "w9c7lwn8um1o99yj",
-    password: "u3rw8lbcasz2h307",
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PWD,
     database: "pyn5h5u7iu857dd2",
     connectionLimit: 10,
     waitForConnections: true
@@ -21,6 +23,17 @@ app.get('/', async (req, res) => {
               ORDER BY lastName`;
    const [authors] = await pool.query(sql);              
    res.render('home.ejs', {authors})
+});
+
+//API to get the author information based on an author Id
+app.get('/api/author/:author_Id', async (req, res) => {
+    console.log(req);
+   let authorId = req.params.author_Id
+   let sql = `SELECT *
+              FROM authors
+              WHERE authorId = ?`;
+   const [authorInfo] = await pool.query(sql,[authorId]);              
+   res.send(authorInfo);//displays info in JSON format
 });
 
 

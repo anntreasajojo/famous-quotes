@@ -16,11 +16,23 @@
 
         <% for (let i of rows) { %> 
           <i class="fs-5"> <%= i.quote %> </i><br>
-          <%= i.firstName %> <%= i.lastName %><br><br>
+          <a href="#" class="authorNames">
+             <%= i.firstName %> <%= i.lastName %></a><br><br>
         <% } %>
 
     </div>
 
+    <script>
+
+       let authorLinks = document.querySelectorAll(".authorNames");
+       for (let i of authorLinks) {
+         i.addEventListener("click", displayAuthorInfo );
+       }
+
+       function displayAuthorInfo(){
+         alert("displaying author info...")
+       }
+    </script>
 
 </body>
 </html>
