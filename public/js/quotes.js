@@ -15,6 +15,13 @@ document.querySelector("#closeModal").addEventListener("click", ()=> { document.
          document.querySelector("#authorName").textContent = data[0].firstName + " " + data[0].lastName;
          document.querySelector("#authorPicture").src = data[0].portrait;
 
+         document.querySelector("#authorDob").textContent = data[0].dob;
+         document.querySelector("#authorDod").textContent = data[0].dod;
+         document.querySelector("#authorSex").textContent = data[0].sex;
+         document.querySelector("#authorProfession").textContent = data[0].profession;
+         document.querySelector("#authorCountry").textContent = data[0].country;
+         document.querySelector("#authorBiography").textContent = data[0].biography;
+
          //enable the modal
          document.querySelector("#authorModal").showModal();
       }
