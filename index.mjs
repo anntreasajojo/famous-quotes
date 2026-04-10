@@ -9,10 +9,10 @@ app.use(express.static('public'));
 app.use(express.urlencoded({extended:true}));
 //setting up database connection pool, replace values in red
 const pool = mysql.createPool({
-    host: "sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    host: "lolyz0ok3stvj6f0.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     user: process.env.DB_USERNAME,
-    password: process.env.DB_PWD,
-    database: "pyn5h5u7iu857dd2",
+    password: process.env.DB_PASSWORD,
+    database: "vmvw2lfdd8tmcia7",
     connectionLimit: 10,
     waitForConnections: true
 });
@@ -21,8 +21,13 @@ app.get('/', async (req, res) => {
    let sql = `SELECT authorId, firstName, lastName
               FROM authors
               ORDER BY lastName`;
-   const [authors] = await pool.query(sql);              
-   res.render('home.ejs', {authors})
+   const [authors] = await pool.query(sql); 
+
+   let sql2 = `SELECT DISTINCT category
+                FROM quotes`; 
+   const [categories] = await pool.query(sql2); 
+   
+   res.render('home.ejs', {authors, categories})
 });
 
 //API to get the author information based on an author Id
@@ -39,10 +44,37 @@ app.get('/api/author/:author_Id', async (req, res) => {
 
 app.get('/searchByAuthor', async (req, res) => {
    let authorId = req.query.authorId;
-   let sql = ``;
-   const [rows] = await pool.query(sql);              
+   let sql = `SELECT quote, firstName, lastName, authorId
+              FROM quotes
+              NATURAL JOIN authors
+              WHERE authorId = ?`;
+   const [rows] = await pool.query(sql, [authorId]);              
    res.render('quotes.ejs', {rows})
 });
+
+app.get('/searchByCategory', async (req, res) => {
+   let category = req.query.category;
+   let sql = `SELECT quote, firstName, lastName, authorId
+              FROM quotes
+              NATURAL JOIN authors
+              WHERE category = ?`;
+   const [rows] = await pool.query(sql, [category]);              
+   res.render('quotes.ejs', {rows})
+});
+
+app.get('/searchByLikes', async (req, res) => {
+   let minLikes = req.query.minLikes;
+   let maxLikes = req.query.maxLikes;
+   let sql = `SELECT quote, firstName, lastName, authorId
+              FROM quotes
+              NATURAL JOIN authors
+              WHERE likes BETWEEN ? AND ?`;
+   const [rows] = await pool.query(sql, [minLikes, maxLikes]);              
+   res.render('quotes.ejs', {rows})
+});
+
+
+
 //Searching quotes by keyword
 //NEVER have user input within the SQL statement!!
 app.get("/searchByKeyword", async(req, res) => {

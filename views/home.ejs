@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lab 6: Quote Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     
-    <h1> Quote Finder </h1>
+    <h1 class="text-center text-primary fw-bold my-4">
+      Quote Finder
+    </h1>
 
 
     <form id="searchByKeywordForm" action="/searchByKeyword" method="GET">
       Keyword: <input type="text" name="keyword" id="keyword">
-      <button> Search by Keyword </button>
+      <button class="btn btn-primary"> Search by Keyword </button>
+      <br>
+      <span id="keywordError" style="color:red;"></span>
     </form> <br><br>
 
 
@@ -22,14 +27,39 @@
 
         <% for (let i of authors) {%>
 
-         <option value=" <%= i.authorId %> ">
+         <option value="<%= i.authorId %>">
              <%= i.firstName %> <%= i.lastName %> </option>
 
         <% } %> 
       </select>
 
-      <button> Search by Authors </button>
+      <button class="btn btn-primary"> Search by Authors </button>
     </form>
+
+    <br><br>
+    
+    <form action="/searchByCategory" method="GET">
+      Category: 
+      <select name="category">
+
+        <% for (let i of categories) {%>
+
+         <option value="<%= i.category %>">
+             <%= i.category %> </option>
+
+        <% } %> 
+      </select>
+
+      <button class="btn btn-primary"> Search by Category </button>
+
+    <br><br>
+
+    <form id="searchByLikes" action="/searchByLikes" method="GET">
+      Min Likes: <input type="number" name="minLikes" id="minLikes">
+      Max Likes: <input type="number" name="maxLikes" id="maxLikes">
+      <button class="btn btn-primary"> Search by Likes </button>
+  
+    </form> 
 
 
     <script>
@@ -39,11 +69,14 @@
 
 
       //ensure that keyword has at least 3 characters
-      function validateKeywordForm(){
+      function validateKeywordForm(event){
 
         let keyword = document.querySelector("input[name=keyword]").value;
+        let errorMessage = document.querySelector("#keywordError");
+
+        errorMessage.textContent = "";
         if (keyword.length < 3) {
-          alert("keyword must be at least 3 characters");
+          errorMessage.textContent = "Keyword must be at least 3 characters";
           event.preventDefault(); //prevents the form submission.
         }
         
